@@ -9,3 +9,8 @@ variable "bucket_prefix" {
   type        = string
   default     = "spotify-data-"
 }
+
+variable "redshift_master_username" {
+  default = "admin"
+  description = "The master username for the Redshift cluster"
+}
