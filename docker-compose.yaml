@@ -51,7 +51,7 @@ x-airflow-common:
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   build: 
     context: .
-    dockerfile: ./Dockerfile
+    dockerfile: Dockerfile
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
@@ -75,6 +75,12 @@ x-airflow-common:
       condition: service_healthy
     postgres:
       condition: service_healthy
+
+x-spark-common: 
+  &spark-common
+  image: bitnami/spark:latest
+  volumes:
+    - spark-logs:/opt/spark/spark-events
 
 services:
   postgres:
@@ -238,7 +244,7 @@ services:
       _PIP_ADDITIONAL_REQUIREMENTS: ''
     user: "0:0"
     volumes:
-      - ${AIRFLOW_PROJ_DIR:-.}:/sources
+      - ./airflow/:/sources
 
   airflow-cli:
     <<: *airflow-common
@@ -275,5 +281,24 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
+  spark-master:
+    <<: *spark-common
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    ports:
+      - "9090:8080"
+      - "7077:7077"
+
+  spark-worker:
+    <<: *spark-common
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_MASTER_URL: spark://spark-master:7077
+
 volumes:
   postgres-db-volume:
+  spark-logs:
