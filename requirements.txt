@@ -2,3 +2,7 @@ apache-airflow-providers-amazon
 pandas
 sqlalchemy
 pyspark
+spotipy
+requests
+python-dotenv
+json

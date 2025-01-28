@@ -1,8 +1,2 @@
 .env
-
-# logs
-**/logs/*
-
-# terraform
-**/.terraform/**
-**/*.tfstate*
+.cahce
