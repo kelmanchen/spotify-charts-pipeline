@@ -5,4 +5,3 @@ pyspark
 spotipy
 requests
 python-dotenv
-json

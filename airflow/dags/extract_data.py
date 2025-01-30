@@ -1,31 +1,13 @@
-import spotipy
-import os
 import requests
 import datetime as dt
 import pandas as pd
 import logging
 
-from dotenv import load_dotenv
-from spotipy.oauth2 import SpotifyOAuth
-
 # Configure Logging
 logging.basicConfig(
     filename="chart_scraper_log.log",
-    level=logging.INFO,
+    level=logging.INFO
 )
-
-load_dotenv()
-
-def get_spotify_token():
-    sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-        client_id=os.getenv('CLIENT_ID'),
-        client_secret=os.getenv('CLIENT_SECRET'),
-        redirect_uri=os.getenv('REDIRECT_URI'),
-        scope='user-read-private'
-    ))
-    token = sp.auth_manager.get_access_token(as_dict=False)
-
-    return token
 
 def get_chart_data(token, date_str):
     headers = {
@@ -83,13 +65,9 @@ def process_entries(entries, date_str):
 
     return tracks, artists, track_artists, chart_data
 
-def get_all_chart_data(token, start_date, end_date):
+def get_all_chart_data(token, start_date, end_date, csv_url):
     current_date = start_date
-
-    all_tracks = []
-    all_artists = []
-    all_track_artists = []
-    all_chart_data = []
+    all_tracks, all_artists, all_track_artists, all_chart_data = [], [], [], []
 
     while current_date <= end_date:
         date_str = current_date.strftime('%Y-%m-%d')
@@ -120,13 +98,6 @@ def get_all_chart_data(token, start_date, end_date):
     ]
 
     for df, filename in df_list:
-        df.to_csv(filename, index=False)
-        logging.info(f"Saved {filename} with {len(df)} records.")
-
-
-if __name__ == "__main__":
-    START_DATE = dt.datetime(2024, 1, 1)
-    END_DATE = dt.datetime(2024, 6, 30)
-    token = get_spotify_token()
-    get_all_chart_data(token, START_DATE, END_DATE)
+        df.to_csv(f'{csv_url}{filename}', index=False)
+        logging.info(f"Saved {csv_url}{filename} with {len(df)} records.")
 
