@@ -5,3 +5,4 @@ pyspark
 spotipy
 requests
 python-dotenv
+boto3

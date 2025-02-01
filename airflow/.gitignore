@@ -1,4 +1,5 @@
-.env
+*.env
+dags/aws.env
 logs/
 plugins/
 data/

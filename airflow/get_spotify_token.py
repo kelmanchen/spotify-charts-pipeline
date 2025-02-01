@@ -15,7 +15,7 @@ def get_spotify_token():
     ))
     token = sp.auth_manager.get_access_token(as_dict=False, check_cache=False)
 
-    set_key(".env", "SPOTIFY_ACCESS_TOKEN", token)
+    set_key("airflow/.env", "SPOTIFY_ACCESS_TOKEN", token)
 
     print(f"Access Token: {token}")
 

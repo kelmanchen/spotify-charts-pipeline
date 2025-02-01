@@ -4,9 +4,9 @@ import datetime as dt
 from dotenv import load_dotenv 
 from airflow import DAG
 from airflow.utils.dates import days_ago
-from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from extract_data import get_all_chart_data
+from upload_to_s3 import upload_csv_s3
 
 load_dotenv()
 
@@ -43,5 +43,12 @@ with DAG(
         }        
     )
 
-    get_charts_data
+    upload_csv_to_s3 = PythonOperator(
+        task_id = "upload_csv_to_s3",
+        python_callable = upload_csv_s3,
+        op_kwargs = {
+            'files': ['artists.csv', 'chart_data.csv', 'track_artists.csv', 'tracks.csv']
+        }
+    )
 
+    get_charts_data >> upload_csv_to_s3
