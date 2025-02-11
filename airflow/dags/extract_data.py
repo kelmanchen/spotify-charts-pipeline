@@ -59,8 +59,8 @@ def process_entries(entries, date_str):
 
         chart_data.append({
             'track_id': track_id,
-            'rank': entry['currentRank'],
-            'entry_date': date_str
+            'entry_date': date_str,
+            'rank': entry['currentRank']
         })
 
     return tracks, artists, track_artists, chart_data
