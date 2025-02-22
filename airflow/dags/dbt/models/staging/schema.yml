@@ -1,0 +1,90 @@
+version: 2
+
+sources:
+  - name: staging
+    schema: public
+    tables:
+      - name: tracks
+      - name: track_artists
+      - name: artists
+      - name: chart_data
+
+models:
+  - name: track_id_cleaned_map
+    description: "Mapping of raw track IDs to cleaned track IDs"
+    columns:
+      - name: track_id
+        description: "Original track ID"
+        tests:
+          - unique
+          - not_null
+      - name: track_id_cleaned
+        description: "Cleaned track ID"
+        tests:
+          - not_null
+
+  - name: stg_tracks
+    description: "Cleaned track data with distinct track IDs"
+    columns:
+      - name: track_id
+        tests:
+          - unique
+          - not_null
+      - name: track_name
+        description: "Name of the track"
+
+  - name: stg_track_artists
+    description: "Mapping of cleaned tracks to their respective artists"
+    columns:
+      - name: track_id
+        description: "The cleaned track ID"
+        tests:
+          - not_null
+      - name: artist_id
+        description: "ID of the artist"
+        tests:
+          - not_null
+
+  - name: stg_chart_data
+    description: "Chart data"
+    columns:
+      - name: track_id
+        description: "The cleaned track ID"
+        tests:
+          - not_null
+      - name: entry_date
+        description: "Date the track entered the chart"
+        tests:
+          - not_null
+      - name: rank
+        description: "Chart ranking of the track"
+        tests:
+          - not_null
+
+  - name: stg_artists
+    description: "Cleaned list of unique artists"
+    columns:
+      - name: artist_id
+        description: "Unique artist ID"
+        tests:
+          - unique
+          - not_null
+      - name: artist_name
+        description: "Name of the artist"
+        tests:
+          - not_null
+
+  - name: stg_track_artists_named
+    description: "Tracks with artist names aggregated"
+    columns:
+      - name: track_id
+        description: "The cleaned track ID"
+        tests:
+          - not_null
+      - name: track_name
+        description: "Name of the track"
+      - name: artist_names
+        description: "Comma-separated list of artist names"
+        tests:
+          - not_null
+

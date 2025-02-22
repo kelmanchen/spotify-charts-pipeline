@@ -8,6 +8,8 @@ from airflow.utils.task_group import TaskGroup
 from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.transfers.s3_to_redshift import S3ToRedshiftOperator
 from airflow.providers.amazon.aws.operators.redshift_data import RedshiftDataOperator
+from cosmos import DbtTaskGroup, ProfileConfig, ProjectConfig, ExecutionConfig
+from cosmos.profiles import RedshiftUserPasswordProfileMapping
 from extract_data import get_all_chart_data
 from upload_to_s3 import upload_csv_s3
 from airflow_connections import create_airflow_connections
@@ -22,8 +24,8 @@ default_args = {
 }
 
 # constants
-EXT_START_DATE = dt.datetime(2024, 1, 1)
-EXT_END_DATE = dt.datetime(2024, 1, 5)
+EXT_START_DATE = dt.datetime(2020, 1, 1)
+EXT_END_DATE = dt.datetime(2024, 12, 31)
 SPOTIFY_TOKEN = os.getenv('SPOTIFY_ACCESS_TOKEN')
 AIRFLOW_HOME = os.getenv('AIRFLOW_HOME')
 CSV_PATH = f'{AIRFLOW_HOME}data/'
@@ -54,11 +56,30 @@ table_profiles = {
     }
 }
 
+# dbt profile
+DBT_PROJECT_PATH = f'{AIRFLOW_HOME}dags/dbt'
+DBT_EXECUTABLE_PATH = f'{AIRFLOW_HOME}dbt_venv/bin/dbt'
+
+profile_config = ProfileConfig(
+    profile_name = "default",
+    target_name = "dev",
+    profile_mapping = RedshiftUserPasswordProfileMapping(
+        conn_id = "redshift_default",
+        profile_args = {
+            "schema": "public"
+        }
+    )
+)
+
+execution_config = ExecutionConfig(
+    dbt_executable_path = DBT_EXECUTABLE_PATH,
+)
+
 with DAG(
     dag_id=f"load_charts_dag",
     default_args=default_args,
     description=f"Load and upload charts data to S3",
-    schedule_interval="@daily",
+    schedule_interval=None,
     catchup=False,
     tags=['spotify']
 ) as dag:
@@ -75,7 +96,8 @@ with DAG(
             'start_date': EXT_START_DATE,
             'end_date': EXT_END_DATE,
             'csv_url': CSV_PATH
-        }        
+        },
+        trigger_rule="dummy"
     )
 
     upload_csv_to_s3 = PythonOperator(
@@ -107,6 +129,13 @@ with DAG(
                 upsert_keys = profile['upsert_keys']
             )
 
-    setup_connections >> get_charts_data >> upload_csv_to_s3 >> create_redshift_tables >> transfer_s3_to_redshift
+    dbt_transform = DbtTaskGroup(
+        group_id = "dbt_transformations",
+        project_config = ProjectConfig(DBT_PROJECT_PATH),
+        profile_config = profile_config,
+        execution_config = execution_config
+    )
+
+    upload_csv_to_s3 >> create_redshift_tables >> transfer_s3_to_redshift >> dbt_transform
 
 

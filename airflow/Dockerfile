@@ -14,7 +14,10 @@ COPY requirements.txt .
 
 USER airflow
 
-RUN pip install --user --upgrade pip
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m venv dbt_venv && source dbt_venv/bin/activate && \
+    PIP_USER= pip install --no-cache-dir dbt-redshift && deactivate
+
 
 WORKDIR $AIRFLOW_HOME

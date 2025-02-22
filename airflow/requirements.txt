@@ -1,7 +1,8 @@
 apache-airflow-providers-amazon
+astronomer-cosmos
+cosmos
 pandas
 sqlalchemy
-pyspark
 spotipy
 requests
 python-dotenv

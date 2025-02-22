@@ -1,4 +1,4 @@
-#  Random password / suffix
+#  random password / suffix
 
 resource "random_password" "password" {
   length           = 16
