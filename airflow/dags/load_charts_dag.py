@@ -136,6 +136,6 @@ with DAG(
         execution_config = execution_config
     )
 
-    upload_csv_to_s3 >> create_redshift_tables >> transfer_s3_to_redshift >> dbt_transform
+    setup_connections >> upload_csv_to_s3 >> create_redshift_tables >> transfer_s3_to_redshift >> dbt_transform
 
 

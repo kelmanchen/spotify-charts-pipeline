@@ -3,10 +3,10 @@ WITH track_artists AS (
 		t.track_id
 		, t.track_name
 		, LISTAGG(a.artist_name, ', ') WITHIN GROUP (ORDER BY a.artist_name) AS artist_names
-	FROM {{ source('staging', 'tracks') }} t
-		INNER JOIN {{ source('staging', 'track_artists') }} ta
+	FROM {{ source('raw', 'tracks') }} t
+		INNER JOIN {{ source('raw', 'track_artists') }} ta
 			ON t.track_id = ta.track_id
-		INNER JOIN {{ source('staging', 'artists') }} a
+		INNER JOIN {{ source('raw', 'artists') }} a
 			ON ta.artist_id = a.artist_id
 	GROUP BY 
 		t.track_id

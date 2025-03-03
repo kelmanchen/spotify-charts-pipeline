@@ -1,5 +1,4 @@
-{{ config(materialized='view') }}
-
-SELECT *
-FROM {{ source('staging', 'artists') }}
+SELECT 
+    *
+FROM {{ source('raw', 'artists') }}
 WHERE artist_name <> ''

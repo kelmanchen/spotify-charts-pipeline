@@ -16,5 +16,6 @@ clean-targets:
 
 models:
   spotify_charts:
+    +materialized: table
     staging:
       +materialized: view

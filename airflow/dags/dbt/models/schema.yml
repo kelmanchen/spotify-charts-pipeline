@@ -1,0 +1,99 @@
+version: 2
+
+models:
+  - name: proportion_new_songs
+    description: "Proportion of new songs entering the charts each month."
+    columns:
+      - name: month
+        description: "The month in which the songs appeared in the charts."
+        tests:
+          - not_null
+      - name: proportion_new_songs
+        description: "The proportion of new songs in the charts for that month as a percentage."
+        tests:
+          - not_null
+
+  - name: top_10_artists
+    description: "Lists the top 10 artists with the most number of days in the top 10."
+    columns:
+      - name: artist_id
+        description: "The unique identifier for the artist."
+        tests:
+          - not_null
+          - unique
+      - name: artist_name
+        description: "The name of the artist."
+        tests:
+          - not_null
+      - name: num_days_in_top_10
+        description: "The total number of days an artist has their songs in the top 10."
+        tests:
+          - not_null
+
+  - name: consecutive_days
+    description: "Categorises songs based on their consecutive number of days in the top 50."
+    columns:
+      - name: consecutive_days_category
+        description: "The category representing the duration of consecutive charting days."
+        tests:
+          - not_null
+      - name: num_tracks
+        description: "The number of tracks for the respective category."
+        tests:
+          - not_null
+
+  - name: chart_reentries
+    description: "Identifies songs that re-entered the charts after at least 7 days."
+    columns:
+      - name: track_id
+        description: "The unique identifier for the track."
+        tests:
+          - not_null
+      - name: track_name
+        description: "The name of the track."
+        tests:
+          - not_null
+      - name: artist_names
+        description: "A string of all artists performing the track."
+        tests:
+          - not_null
+      - name: number_reentries
+        description: "The total number of times the track re-entered the charts."
+        tests:
+          - not_null
+      - name: peak_rank
+        description: "The highest position the track ranked in the chart."
+        tests:
+          - not_null
+
+  - name: days_to_peak
+    description: "The number of days a track took to reach its peak chart position."
+    columns:
+      - name: days_to_peak
+        description: "The number of days between a track's first chart entry and its peak position."
+        tests:
+          - not_null
+      - name: frequency
+        description: "The count of tracks that took the same number of days to reach their peak position."
+        tests:
+          - not_null
+
+  - name: longest_top_10_streaks
+    description: "Identifies the song with the longest consecutive streak in the top 10."
+    columns:
+      - name: track_id
+        description: "The unique identifier for the track."
+        tests:
+          - not_null
+      - name: track_name
+        description: "The name of the track."
+        tests:
+          - not_null
+      - name: artist_names
+        description: "A concatenated string of all artists performing the track."
+        tests:
+          - not_null
+      - name: num_days_consecutive
+        description: "The number of consecutive days the track stayed in the top 10."
+        tests:
+          - not_null
