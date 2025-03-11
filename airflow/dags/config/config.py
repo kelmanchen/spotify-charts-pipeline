@@ -7,13 +7,12 @@ load_dotenv()
 
 # get AWS credentials
 os.environ['AWS_SHARED_CREDENTIALS_FILE'] = '/home/.aws/credentials'
-
 session = boto3.Session()
 credentials = session.get_credentials()
-
 if credentials is None:
     raise ValueError("AWS credentials not found. Ensure they are set in your environment or AWS credentials file.")
 
+# set constants
 AIRFLOW_HOME = os.getenv("AIRFLOW_HOME")
 AWS_CONFIG = dotenv_values(f"{AIRFLOW_HOME}dags/config/aws_config.env")
 

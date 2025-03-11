@@ -3,7 +3,6 @@ import logging
 
 from botocore.exceptions import NoCredentialsError
 
-# Configure Logging
 logging.basicConfig(
     filename="chart_scraper_log.log",
     level=logging.INFO

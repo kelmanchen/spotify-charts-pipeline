@@ -22,7 +22,7 @@ default_args = {
     "retries": 2
 }
 
-# Table profiles mapping
+# table profiles mapping
 table_profiles = {
     "artists": {
         "upsert_keys": ["artist_id"],
@@ -42,6 +42,7 @@ table_profiles = {
     }
 }
 
+# dbt profile configuration
 profile_config = ProfileConfig(
     profile_name = "default",
     target_name = "dev",
@@ -53,6 +54,7 @@ profile_config = ProfileConfig(
     )
 )
 
+# dbt execution configuration
 execution_config = ExecutionConfig(
     dbt_executable_path = CONFIG["DBT"]["DBT_EXECUTABLE_PATH"],
 )
@@ -61,7 +63,7 @@ with DAG(
     dag_id=f"spotify_charts_elt",
     default_args=default_args,
     description=f"Load and upload charts data to S3",
-    schedule_interval=None,
+    schedule_interval="@once",
     catchup=False,
     tags=["spotify"]
 ) as dag:
